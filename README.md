@@ -20,7 +20,7 @@ This project showcases the use case of using both the Locations and Loyalty Offe
 8. Navigate to `http://localhost:8080/` in your browser.
 
 ## Tutorial
-A tutorial can be found [here](PLACEHOLDER) 
+A tutorial can be found [here](https://developer.mastercard.com/tutorial/locations-loyalty-offers-api-tutorial?lang=java#overview) 
 for setting up and using this service.
 
 ## Loyalty Offers Client Library
