@@ -1,0 +1,27 @@
+form {
+    width: 85%;
+    padding-bottom: 2em;
+    margin: auto;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.form-input {
+    border-radius: 5px;
+    outline: none;
+}
+
+.form-input:hover,
+.form-input:focus {
+    border-color: rgb(147, 179, 175);
+}
+
+.info-section {
+    margin: 25px;
+    padding: 0 2em 0.5em 2em;
+}
+
+.submit {
+    text-align: center;
+    padding-top:2em;
+}

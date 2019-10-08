@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:white-space="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Loyalty Offers & Locations demo application</title>
+    <link rel="stylesheet" href="css/bootstrap.css" th:href="@{/css/bootstrap.css}"/>
+    <link rel="stylesheet" href="css/form.css" th:href="@{/css/form.css}">
+    <link rel="stylesheet" href="css/application.css" th:href="@{/css/application.css}">
+
+    <script type="application/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/jquery-ui.css}">
+    <script type="application/javascript" th:src="@{/js/jquery-ui.js}"></script>
+    <script type="text/javascript" src="js/application.js" th:src="@{/js/application.js}"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body class="container">
+
+<form id="disbursement-form" th:action="@{/locationsRequest}" th:object="${locationsModel}" method="get">
+    <div class="info-section-header">
+        <h2>Merchant Details</h2>
+    </div>
+    <div class="info-section">
+        <div class="form-group form-row">
+            <div class="col-md-3">
+                <label for="pageOffset">Page Offset *</label>
+                <input type="text" th:field="*{pageOffset}" class="form-control form-input" id="pageOffset" required>
+            </div>
+            <div class="col-md-3">
+                <label for="pageLength">Page Length *</label>
+                <input type="text" th:field="*{pageLength}" class="form-control form-input" id="pageLength" required>
+            </div>
+            <div class="col-md-6">
+                <label for="city">City *</label>
+                <select th:field="*{city}" class="form-control form-input" id="city">
+                    <option th:each="city : ${cities}"
+                            th:value="${city}"
+                            th:text="${city}">Select..</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group form-row">
+            <div class="col-md-4">
+                <label for="latitude">Latitude</label>
+                <input type="text" th:field="*{latitude}" class="form-control form-input" id="latitude" >
+            </div>
+            <div class="col-md-4">
+                <label for="longitude">Longitude</label>
+                <input type="text" th:field="*{longitude}" class="form-control form-input" id="longitude" >
+            </div>
+            <div class="col-md-4">
+                <label for="radius">Radius</label>
+                <input type="text" th:field="*{radius}" class="form-control form-input" id="radius" >
+            </div>
+        </div>
+    </div>
+    <div class="submit">
+        <button type="submit" class="btn button">Submit</button>
+    </div>
+</form>
+
+<div th:if="${success} != null or ${loyaltySuccess} != null or ${error} != null">
+    <div th:if="${error} != null" class="alert alert-warning" id="error-alert" role="alert">
+        <p th:text="${error}">Error message.</p>
+    </div>
+    <div th:if="${success} != null or ${loyaltySuccess} != null" class="alert alert-success" id="success-alert" role="alert">
+        <p th:text="${success} != null ? ${success} : ${loyaltySuccess}">Success message!</p>
+    </div>
+        <div class="alert" role="alert">
+            <div th:if="${success} != null">
+                <button class="btn button show" id="show-request">View Merchants</button>
+                <button class="btn button show" id="show-response">View Response</button>
+                <button class="btn button show" id="reload">Reset</button>
+            </div>
+            <div th:if="${success} != null">
+                <div class="json">
+                    <button class="close" id="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button><br>
+                    <div id="request">
+                        <tr
+                            th:each="merchant, iStat : ${merchants}">
+                            <form action="#" data-th-action="@{/loyaltyRequest}" data-th-object="${loyaltyOfferModel}" method="post" th:action="@{/loyaltyRequest}">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn merchant-button show" id="place" th:text="${merchant.getMerchantName()}"></button>
+                                    <input type="hidden" name="merchantId" th:value="${merchant.getMerchantId()}"/>
+                                </div>
+                            </form><hr>
+                        </tr>
+                    </div>
+                    <div id="response">
+                        <pre th:text="${response}">Response</pre>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${loyaltySuccess} != null">
+                <div class="offers">
+                    <div id="loyaltyResponse">
+                        <h2 style="text-align: center">Offer Response</h2><hr>
+                        <pre th:text="${loyaltyResponse}">Loyalty Response</pre>
+                    </div><hr>
+                    <button class="btn merchant-button show" id="reset">Start Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

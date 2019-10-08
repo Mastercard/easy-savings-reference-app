@@ -1,0 +1,1228 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Loyalty Offers
+  description: |
+    Our Loyalty Offers APIs provide offer content you can use in your e-commerce
+    and m-commerce applications - from online banking to email, mobile, and social
+    media. Simply search for content that is relevant for your consumers.
+  x-artifactId: loyalty-offers
+  contact:
+    name: Mastercard API Team
+    email: api@mastercard.com
+    url: 'https://developer.mastercard.com/'
+host: sandbox.api.mastercard.com
+basePath: /eop/offer/v1
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /search:
+    post:
+      summary: >-
+        This resource will return offers that match the specified search
+        criteria.
+      description: >
+        This resource provides the ability to construct a more detailed search
+        for an offer(s). You may want to filter offers by category or display
+        offers near a certain location or point on the map. Only the offers with
+        an Activation Status of Approved will be returned.
+      tags:
+      - Search Offers
+      parameters:
+      - name: OfferSearchCriteriaSchema
+        in: body
+        description: Contains the details of the offer search criteria.
+        schema:
+          $ref: '#/definitions/OfferSearchCriteriaSchema'
+        required: true
+      - name: format
+        in: query
+        description: Option to receive json or xml Response
+        type: string
+        required: false
+        x-example: json
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BrowseOffersResponseSchema'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorsResponse'
+      x-testable: false
+  /detail/{offerid}:
+    get:
+      summary: This resource will return offer details for a specific Offer ID.
+      description: >
+        This resource can be used to retrieve all of the offer details for a
+        specific Offer ID. The Activation Status of the offer must be Approved.
+      parameters:
+      - name: offerid
+        in: path
+        description: Unique Offer Identifier.
+        type: string
+        required: true
+      - name: format
+        in: query
+        description: Option to receive json or xml Response
+        type: string
+        required: false
+        x-example: json
+      tags:
+      - Offer Details
+      operationId: GetOfferDetails
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: The list of offer details returned for a specific Offer ID.
+          schema:
+            $ref: '#/definitions/GetOfferDetailsResponseSchema'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorsResponse'
+      x-testable: false
+definitions:
+  OfferSearchCriteriaSchema:
+    type: object
+    properties:
+      OfferSearchCriteria:
+        $ref: '#/definitions/OfferSearchCriteria'
+  BrowseOffersResponse:
+    type: object
+    properties:
+      Return:
+        $ref: '#/definitions/BrowseOfferDataOutput'
+  GetOfferDetailsResponse:
+    type: object
+    properties:
+      Return:
+        $ref: '#/definitions/OfferDetailOutput'
+  OfferSearchCriteria:
+    type: object
+    properties:
+      BookingEnd:
+        type: string
+        format: date-time
+        description: >-
+          Date from which offer will not available for redeeming. Format -
+          yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        example: "2021-12-31T00:00:00-06:00"
+      BookingStart:
+        type: string
+        format: date-time
+        description: >-
+          Date from which offer will be available for redeeming. Format -
+          yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        example: "2018-11-30T00:00:00-06:00"
+      Category:
+        type: array
+        items:
+          type: string
+        description: Offer Categories. Refer Appendix Metadata dictionary.
+        example: [TRAVEL]
+      DisplayEnd:
+        type: string
+        format: date-time
+        description: >-
+          Date from which offer will end displaying for customers. Format -
+          yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        example: "2021-12-31T00:00:00-06:00"
+      DisplayStart:
+        type: string
+        format: date-time
+        description: >-
+          Date from which offer will start displaying for customers. Format -
+          yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        example: "2018-11-30T00:00:00-06:00"
+      EventEnd:
+        type: string
+        format: date-time
+        description: >-
+          Date from which offer will not available for redeeming. Format -
+          yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        example: "2021-12-31T00:00:00-06:00"
+      EventStart:
+        type: string
+        format: date-time
+        description: >-
+          Date from which offer will be available for redeeming. Format -
+          yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        example: "2018-11-30T00:00:00-06:00"
+      FulfillmentPartner:
+        type: string
+        description: Fulfilment partner name like Avis UK
+        example: Avis UK
+      ItemsPerPage:
+        type: integer
+        format: int32
+        description: 'In the pagination, items per page requested. Default is 25.'
+        example: 200
+      Keywords:
+        type: string
+        description: Search offers by keywords
+        example: Drive Safe
+      Language:
+        type: string
+        description: >-
+          Language code, format is language_country, en_US. Refer Appendix D,
+          Metadata dictionary.
+        example: en_US
+      MerchantName:
+        type: string
+        description: >-
+          Merchant name. The consumer can search for offers by entering merchant
+          name
+        example: Avis UK
+      OfferSource:
+        type: string
+        description: Source of an offer
+        example: AVIS
+      OfferType:
+        type: array
+        items:
+          $ref: '#/definitions/OfferType'
+        description: >-
+          This describes the type of the offer. Example - Coupon Offer, Pre-paid
+          offer, Statement credit or Postpaid credit
+      PageNumberRequested:
+        type: integer
+        format: int32
+        description: 'In the pagination, page number requested'
+        example: 1
+      Platform:
+        type: string
+        description: Comma separated list of programs that the offer corresponds to
+        example: easysavings, priceless
+      ProductName:
+        type: array
+        items:
+          type: string
+        description: >-
+          This holds code of Various credit card/debit card type. Eligible card
+          Types. Possible values - MWE(MasterCard World Elite), MCS (MasterCard
+          Standard). Refer Appendix D, Metadata dictionary.
+        example: [MBK, MWE]
+      Program:
+        type: string
+        description: Comma separated list of programs that the offer corresponds to.
+        example: easysavings
+      Range:
+        type: integer
+        format: int32
+        description: >-
+          Maximum distance of radius in miles to deal location from center
+          point. Defaults to 10. Requires latitude and longitude
+        example: 11
+      RedemptionType:
+        type: array
+        items:
+          type: string
+        description: >-
+          Possible way?s that offer be redeemed. Refer Appendix D, Metadata
+          dictionary.
+        example: [ONLINE_CODE, EMAIL, ONLINE_LINK]
+      SeoUrl:
+        type: string
+        description: SEO URL associated with the Offer.
+        example: sample-seo-url
+      SourceGeos:
+        $ref: '#/definitions/SourceSearchGeos'
+      SourcedGlobally:
+        type: boolean
+        description: Flag indicating if offer is sourced globally
+        example: false
+      Tag:
+        type: array
+        items:
+          type: string
+          description: This describes specific details of the offer.
+          example: Wooden furniture
+      TagCategory:
+        type: string
+      TagOfferPrice:
+        type: array
+        items:
+          $ref: '#/definitions/OfferPriceTag'
+      TagTier:
+        $ref: '#/definitions/OfferTier'
+      TargetFis:
+        type: string
+        description: >-
+          Comma separated list of FI names. For Priceless, It will be the City
+          code like added in Example section.
+        example: unitedstates
+      TargetGeos:
+        $ref: '#/definitions/TargetSearchGeos'
+      TargetedGlobally:
+        type: boolean
+        description: Flag indicating if offer is targeted globally.
+        example: false
+      #     TopOffers:
+      #       type: integer
+      #       format: int32
+      #       description: >-
+      #         Define number of top offers you want to receive. If defined, response
+      #         will only contain top offers.
+      #      example: 10
+      UserId:
+        type: string
+        description: 'This the id used to login for authentication, if applicable.'
+        example: test@abc.com
+      FId:
+        type: string
+        description: Financial institution id.
+        example: unitedstates
+  Geo:
+    type: object
+    properties:
+      AdministrativeAreaLevel1:
+        $ref: '#/definitions/GeoAttribute'
+      AdministrativeAreaLevel2:
+        $ref: '#/definitions/GeoAttribute'
+      AdministrativeAreaLevel3:
+        $ref: '#/definitions/GeoAttribute'
+      City:
+        $ref: '#/definitions/GeoAttribute'
+      Country:
+        $ref: '#/definitions/GeoAttribute'
+      Latitude:
+        type: number
+        format: double
+        description: This provide latitude information
+        example: 37.806461
+      Longitude:
+        type: number
+        format: double
+        description: This provide longitude information
+        example: -122.478333
+      PostalCode:
+        type: string
+        description: This provide postal code information
+        example: 63005
+      Region:
+        $ref: '#/definitions/GeoAttribute'
+  SourceSearchGeo:
+    type: object
+    properties:
+      AdministrativeAreaLevel1:
+        $ref: '#/definitions/GeoAttribute'
+      AdministrativeAreaLevel2:
+        $ref: '#/definitions/GeoAttribute'
+      AdministrativeAreaLevel3:
+        $ref: '#/definitions/GeoAttribute'
+      City:
+        $ref: '#/definitions/GeoAttribute'
+      Country:
+        $ref: '#/definitions/GeoAttribute'
+      Latitude:
+        type: number
+        format: double
+        description: This provide latitude information
+        example: 37.806461
+      Longitude:
+        type: number
+        format: double
+        description: This provide longitude information
+        example: -122.478333
+      Region:
+        $ref: '#/definitions/GeoAttribute'
+  TargetSearchGeo:
+    type: object
+    properties:
+      AdministrativeAreaLevel1:
+        $ref: '#/definitions/GeoAttribute'
+      AdministrativeAreaLevel2:
+        $ref: '#/definitions/GeoAttribute'
+      AdministrativeAreaLevel3:
+        $ref: '#/definitions/GeoAttribute'
+      City:
+        $ref: '#/definitions/GeoAttribute'
+      Country:
+        $ref: '#/definitions/GeoAttribute'
+      Region:
+        $ref: '#/definitions/GeoAttribute'
+  GeoAttribute:
+    type: object
+    properties:
+      Code:
+        type: string
+        description: This provides the clean name or code of the attribute
+        example: newyork
+      DisplayText:
+        type: string
+        description: This provides the clean name or code of the attribute
+        example: Newyork
+  BrowseOfferDataOutput:
+    allOf:
+    - $ref: '#/definitions/BaseOutput'
+    - type: object
+      properties:
+        OfferData:
+          type: array
+          items:
+            $ref: '#/definitions/BrowseOfferData'
+  BaseOutput:
+    type: object
+    properties:
+      NumberOfPages:
+        type: integer
+        format: int32
+        description: Total number of pages.
+        example: 681
+      ResponseCode:
+        type: integer
+        format: int32
+        description: Response for successful request. Similar to HTTP response codes.
+        example: 200
+      ResponseDescription:
+        type: string
+        description: Message to denote the health of the response.
+        example: "Service com.eop.service.consumer.v1d0.BrowseOffers success."
+      TotalCount:
+        type: integer
+        format: int32
+        description: Total count
+        example: 2
+  BrowseOfferData:
+    type: object
+    properties:
+      BinRanges:
+        type: string
+        description: Target Bin ranges for the offer
+        example: 5678-6789
+      BookingEnd:
+        type: string
+        format: date-time
+        description: End date for booking.
+        example: "2021-12-31T00:00:00-06:00"
+      BookingStart:
+        type: string
+        format: date-time
+        description: Date from which consumer can start purchase (for prepaid offers) or activate (for statement credit offer).
+        example: "2018-11-30T00:00:00-06:00"
+      CampaignId:
+        type: string
+        description: Unique campaign-id in the system
+        example: ffac6292-2d6f-46f0-9a69-ccb0aa77e544
+      CampaignType:
+        $ref: '#/definitions/CampaignType'
+      Category:
+        type: array
+        items:
+          type: string
+        description: Offer Categories
+        example: ACTIVITIES
+      ComplimentaryPriceText:
+        type: string
+        description: Complimentary text in case price is not applicable for the offer.
+        example: Complimentary for 30 days trial price after trial $69 per annum
+      CreatedAt:
+        type: string
+        format: date-time
+        description: Date on which the offer created.
+        example: "2018-02-12T04:19:31-06:00"
+      CurrencyCode:
+        type: string
+        description: Currency code of the offer.
+        example: USD
+      DiscountPercentage:
+        type: number
+        format: double
+        description: Percentage discount for an offer if available.
+        example: 5
+      DisplayEnd:
+        type: string
+        format: date-time
+        description: End date for display.
+        example: "2020-12-31T00:00:00-06:00"
+      DisplayStart:
+        type: string
+        format: date-time
+        description: Date from which offer will start displaying for customers.
+        example: "2018-11-30T00:00:00-06:00"
+      EventEnd:
+        type: string
+        format: date-time
+        description: End date for redemption period.
+        example: "2021-12-31T00:00:00-06:00"
+      EventStart:
+        type: string
+        format: date-time
+        description: 'For statement credit offer, start date for redemption period.'
+        example: "2018-11-30T00:00:00-06:00"
+      ExcludedTargetGeos:
+        $ref: '#/definitions/ExcludedTargetGeos'
+      ExternalOfferId:
+        type: string
+      FulfillmentPartner:
+        type: string
+        description: Merchant who is fulfilling the offer.
+        example: Clarus Marketing Group
+      HasDynamicVoucher:
+        type: boolean
+        description: Status of dynamic voucher redemption option.
+        example: true
+      Headline:
+        type: string
+        description: Offer headline or title.
+        example: Enjoy 30 DAYS OF FREE 2-DAY SHIPPING shop online with MasterCard
+      I18nOffers:
+        $ref: '#/definitions/I18nOffers'
+      ItemsPerPage:
+        type: integer
+        format: int32
+      Language:
+        type: string
+        description: Language of the offer.
+        example: en_US
+      LinkedId:
+        type: string
+        description: Linked ID between a parent and child offer
+        example: 36033279-add0-4725-86bd-cd6935e4ecd4
+      #     linkedOffer:
+      #       $ref: '#/definitions/LinkedOffer1'
+      LongDescription:
+        type: string
+        description: long description of an offer
+        example: >-
+          American Airlines, Inc. (AA) is a major U.S. airline headquartered in
+          Fort Worth, Texas. It operates an extensive international and domestic
+          network, with scheduled flights throughout North America, the
+          Caribbean, South America, Europe, and Asia
+      MainCategory:
+        type: array
+        items:
+          $ref: '#/definitions/MainCategory'
+      Merchant:
+        $ref: '#/definitions/Merchant'
+      NearByAddresses:
+        $ref: '#/definitions/NearByAddresses'
+      OfferId:
+        type: string
+        description: Unique Offer Identifier
+        example: 6e9cebc8-c543-48fb-b7b2- ad2987674997
+      OfferMedia:
+        $ref: '#/definitions/OfferMedia'
+      OfferSource:
+        type: string
+        description: Program which the offer belongs.
+        example: Priceless
+      OfferType:
+        $ref: '#/definitions/OfferType'
+      PartnerPrograms:
+        type: string
+        description: Partner Programs the offer is being shared with.
+        example: xyz
+      Platform:
+        type: string
+        description: Programs to which the offer belongs.
+        example: 'easysavings, priceless'
+      Price:
+        type: number
+        format: double
+        description: Discount user can get by using a coupon.
+      Products:
+        $ref: '#/definitions/Products'
+      Program:
+        type: string
+        description: Programs associated with the offer.
+        example: 'xyz, priceless'
+      RedemptionType:
+        type: array
+        items:
+          $ref: '#/definitions/RedemptionType'
+      Seo:
+        $ref: '#/definitions/Seo'
+      ShortDescription:
+        type: string
+        description: Short description of an offer.
+      SourceGeos:
+        $ref: '#/definitions/SourceGeos'
+      SourcedGlobally:
+        type: boolean
+        description: Flag indicating if offer is sourced globally
+        example: false
+      Status:
+        type: string
+      Subtitle:
+        type: string
+        description: Subtitle for offer.
+        example: Get free a free drink on total of above $20.
+      Tag:
+        type: array
+        items:
+          type: string
+      TagCategory:
+        type: array
+        items:
+          type: string
+      TagOfferPrice:
+        type: array
+        items:
+          $ref: '#/definitions/OfferPriceTag'
+      TagTier:
+        $ref: '#/definitions/OfferTier'
+      TargetFis:
+        type: string
+      TargetGeos:
+        $ref: '#/definitions/TargetGeos'
+      TargetedGlobally:
+        type: boolean
+        description: Flag indicating if offer is targeted globally.
+        example: false
+      UpdatedAt:
+        type: string
+        format: date-time
+        description: Date on which the offer got updated.
+        example: '2019-03-27T14:23:44-05:00'
+      UserId:
+        type: string
+      FId:
+        type: string
+        description: Financial institution id.
+        example: Unitedstates
+  Merchant:
+    type: object
+    properties:
+      Category:
+        type: string
+      Name:
+        type: string
+      StandardMerchantName:
+        type: string
+  MerchantByAddress:
+    type: object
+    properties:
+      Addresses:
+        type: array
+        items:
+          $ref: '#/definitions/BaseAddress'
+      Category:
+        type: string
+      ClassifierName:
+        type: string
+      FacebookUrl:
+        type: string
+      Language:
+        type: string
+      MerchantCustomerCare:
+        type: string
+      Name:
+        type: string
+      PrimaryAddressId:
+        type: integer
+        format: int32
+      StandardMerchantName:
+        type: string
+      StoreLocatorUrl:
+        type: string
+      TwitterUrl:
+        type: string
+      WebsiteUrl:
+        type: string
+  BaseAddress:
+    type: object
+    properties:
+      City:
+        type: string
+      Country:
+        type: string
+      CountryDisplay:
+        type: string
+      Distance:
+        type: string
+      Email:
+        type: string
+      InternationalPhone:
+        type: string
+      Language:
+        type: string
+      Latitude:
+        type: number
+        format: double
+      Longitude:
+        type: number
+        format: double
+      Name:
+        type: string
+      Phone:
+        type: string
+      PostalCode:
+        type: string
+      Primary:
+        type: boolean
+      State:
+        type: string
+      Street:
+        type: string
+      Street2:
+        type: string
+      Street3:
+        type: string
+      Website:
+        type: string
+      WorkingHours:
+        type: string
+  OfferMedia:
+    type: object
+    properties:
+      ImageGalleryTitle:
+        type: string
+      OfferImage:
+        $ref: '#/definitions/OfferImage1'
+  OfferImage:
+    type: object
+    properties:
+      AltText:
+        type: string
+      ImageUrl:
+        type: string
+      Description:
+        type: string
+  Product:
+    properties:
+      Code:
+        type: string
+        description: >-
+          Product code like MCW For priceless Program,Product Name holds
+          different MasterCard card types like Master card platinum, MasterCard
+          Gold. This holds the codes.
+        example: MCW
+      Imageurl:
+        type: string
+        description: Imageurl or image path associated for the product.
+        example: >-
+          https://assets.eop.mastercard.com/content/dam/offers/8/image/1/Tulips.jpg
+  Seo:
+    type: object
+    properties:
+      Description:
+        type: string
+        description: Description about seo. Enter one sentence to be displayed by search engines.
+        example: Receive 20% off your membership and explore culture at the Art Institute of Chicago
+      Keywords:
+        type: string
+        description: Keywords for the seo. SEO friendly keywords do not display on the page, but are read by search engines. They should be the top keyword phrases, comma delimited, and can include related words or common misspellings not used in the page.
+        example: Receive 20% off your membership and explore culture at the Art Institute of Chicago.
+      Title:
+        type: string
+        description: Title for seo. Provide a short title with descriptive words to be displayed by search engines.
+        example: 20% off Art Institute of Chicago Membership
+      Url:
+        type: string
+        description: URL of the seo. SEO friendly keywords do not display on the page, but are read by search engines. They should be the top keyword phrases, comma delimited, and can include related words or common misspellings not used in the page.
+        example: Save-on-Art-Institute-of-Chicago- Membership
+  OfferDetailOutput:
+    type: object
+    properties:
+      NumberOfPages:
+        type: integer
+        format: int32
+        description: Total number of pages.
+        example: 1
+      ResponseCode:
+        type: integer
+        format: int32
+        description: Response for successful request. Similar to HTTP response codes.
+        example: 200
+      ResponseDescription:
+        type: string
+        description: Message to denote the health of the response.
+        example: "Service Get offer details success."
+      TotalCount:
+        type: integer
+        format: int32
+        description: Total count
+        example: 1
+      DetailOfferData:
+        $ref: '#/definitions/DetailOfferData'
+  DetailOfferData:
+    type: object
+    properties:
+      ActivationStatus:
+        type: string
+        description: Status of the offer.
+        example: Approved
+      ActualPrice:
+        type: number
+        format: double
+        description: Original price of an offer.
+        example: 17
+      BinRanges:
+        type: string
+        description: Target Bin ranges for the offer.
+        example: 5678-6789
+      BookingEnd:
+        type: string
+        format: date-time
+        description: End date for booking.
+        example: "2021-12-31T00:00:00-06:00"
+      BookingStart:
+        type: string
+        format: date-time
+        description: Date from which consumer can start purchase (for prepaid offers) or activate (for statement credit offer).
+        example: "2018-11-30T00:00:00-06:00"
+      BuyText:
+        type: string
+      CampaignType:
+        $ref: '#/definitions/CampaignType'
+      Category:
+        type: array
+        items:
+          type: string
+      ComplimentaryPriceText:
+        type: string
+        description: Complimentary text in case price is not applicable for the offer.
+        example: Complimentary for 30 days trial price after trial $69 per annum
+      CreatedAt:
+        type: string
+        format: date-time
+        description: Date on which the offer created.
+        example: "2018-02-12T04:19:31-06:00"
+      CurrencyCode:
+        type: string
+        description: Currency code of the offer.
+        example: USD
+      DetailCouponOffer:
+        $ref: '#/definitions/DetailCouponOffer'
+      DetailPostpaidCreditOffer:
+        $ref: '#/definitions/DetailPostpaidCreditOffer'
+      DetailPrepaidOffer:
+        $ref: '#/definitions/DetailPrepaidOffer'
+      DiscountPercentage:
+        type: number
+        format: double
+      DisplayEnd:
+        type: string
+        format: date-time
+        description: End date for display.
+        example: "2020-12-31T00:00:00-06:00"
+      DisplayStart:
+        type: string
+        format: date-time
+        description: Date from which offer will start displaying for customers.
+        example: "2018-11-30T00:00:00-06:00"
+      EventDurationMinutes:
+        type: string
+        description: Duration of event in minutes.
+        example: 120
+      EventEnd:
+        type: string
+        format: date-time
+        description: End Date To Redeem the Offer. They might be a time specific events.
+        example: "2021-12-31T00:00:00-06:00"
+      EventStart:
+        type: string
+        format: date-time
+        description: Start Date To Redeem the Offer. They might be a time specific events.
+        example: "2018-11-30T00:00:00-06:00"
+      ExcludedTargetGeos:
+        $ref: '#/definitions/ExcludedTargetGeos'
+      ExternalOfferId:
+        type: string
+        description: If the offer is imported/created from external system to EOP, the external system?s identification id will be provided in the response.
+      Fid:
+        type: string
+        description: Financial institution id.
+        example: unitedstates
+      FulfillmentPartner:
+        $ref: '#/definitions/FulfillmentPartner'
+      HasDynamicVoucher:
+        type: boolean
+        description: Status of dynamic voucher redemption option.
+        example: true
+      I18nOffers:
+        $ref: '#/definitions/I18nOffers'
+      Language:
+        type: string
+      LinkedId:
+        type: string
+      #     linkedOffer:
+      #       $ref: '#/definitions/LinkedOffer'
+      LinkoutUrl:
+        type: string
+      MainCategory:
+        type: array
+        items:
+          $ref: '#/definitions/MainCategory'
+      MaxUserBuys:
+        type: integer
+        format: int32
+        description: Maximum Quantities can Users buy. This applicable to Coupon and prepaid offers.
+        example: 12
+      Merchant:
+        $ref: '#/definitions/MerchantByAddress'
+      OfferDisplay:
+        $ref: '#/definitions/OfferDisplay'
+      OfferId:
+        type: string
+      OfferMedia:
+        $ref: '#/definitions/OfferMedia'
+      OfferSource:
+        type: string
+      OfferStoreLocatorUrl:
+        type: string
+      OfferType:
+        $ref: '#/definitions/OfferType'
+      OfferUrl:
+        type: string
+      PartnerPrograms:
+        type: string
+      Platform:
+        type: string
+      Price:
+        type: number
+        format: double
+      Products:
+        $ref: '#/definitions/Products'
+      Program:
+        type: string
+      RedemptionAddresses:
+        $ref: '#/definitions/RedemptionAddresses'
+      RedemptionCodeType:
+        $ref: '#/definitions/RedemptionCodeType'
+      RedemptionPhone:
+        type: string
+      RedemptionTemplateName:
+        type: string
+      RedemptionType:
+        type: array
+        items:
+          $ref: '#/definitions/RedemptionType'
+      Seo:
+        $ref: '#/definitions/Seo'
+      SourceGeos:
+        $ref: '#/definitions/SourceGeos'
+      SourcedGlobally:
+        type: boolean
+      SourcedGlobaly:
+        type: boolean
+      Tag:
+        type: array
+        items:
+          type: string
+      TagCategory:
+        type: array
+        items:
+          type: string
+      TagOfferPrice:
+        type: array
+        items:
+          $ref: '#/definitions/OfferPriceTag'
+      TagTier:
+        $ref: '#/definitions/OfferTier'
+      TargetFis:
+        type: string
+      TargetGeos:
+        $ref: '#/definitions/TargetGeos'
+      TargetedGlobally:
+        type: boolean
+      TotalInventory:
+        type: integer
+        format: int32
+      UpdatedAt:
+        type: string
+        format: date-time
+      UserId:
+        type: string
+  DetailCouponOffer:
+    type: object
+    properties:
+      OfferType:
+        type: string
+  DetailPostpaidCreditOffer:
+    type: object
+    properties:
+      ActivationType:
+        type: string
+      AutoActivationOptOut:
+        type: boolean
+      CashBack:
+        type: number
+        format: double
+      GracePeriod:
+        type: integer
+        format: int32
+      MaxCashBack:
+        type: number
+        format: double
+      MinTransactionAmountToRedeem:
+        type: number
+        format: double
+      OfferType:
+        type: string
+      RebateType:
+        type: string
+      RedemptionMode:
+        type: string
+      VisitThreshold:
+        type: integer
+        format: int32
+  DetailPrepaidOffer:
+    type: object
+    properties:
+      OfferType:
+        type: string
+        description: Type of prepaid offers.
+  FulfillmentPartner:
+    type: object
+    properties:
+      LogoAltText:
+        type: string
+      LogoUrl:
+        type: string
+      PartnerName:
+        type: string
+  InternationalizationOfferData:
+    type: object
+    properties:
+      Language:
+        type: string
+      OfferId:
+        type: string
+  OfferDisplay:
+    type: object
+    properties:
+      Category:
+        type: string
+        description: Display Category.
+        example: Entertainment
+      Headline:
+        type: string
+        description: The headline of the offer.
+        example: $100 OFF on your chosen holiday destination.
+      LongDescription:
+        type: string
+        description: The long description of an offer.
+        example:  American Airlines, Inc. (AA) is a major U.S. airline headquartered in Fort Worth, Texas. It operates an extensive international and domestic network, with scheduled flights throughout North America, the Caribbean, South America, Europe, and Asia. Its route network centers around five "cornerstone" hubs in Dallas/Fort Worth, New York, Los Angeles, Miami, and Chicago. Its primary maintenance base is located at Tulsa International Airport (TUL).
+      ShortDescription:
+        type: string
+        description: The short description of an offer display.
+        example:  $100 OFF on your next chosen holiday destination. You will get hotels and cars at cheaper rate. Great time to escape from your daily routine and enjoy.
+      Subtitle:
+        type: string
+        description: The subtitle of an offer.
+        example: $100 OFF on your next chosen holiday destination. You will get hotels and cars at cheaper rate.
+      Terms:
+        type: string
+        description: Terms and condition for the offer.
+        example:  Terms and condition of the offer.
+  MainCategory:
+    type: object
+    properties:
+      Name:
+        type: string
+      SubCategory:
+        type: array
+        items:
+          type: string
+  OfferType:
+    description: >-
+      This describes the type of the offer. Example - Coupon Offer, Pre-paid
+      offer, Statement credit or Postpaid credit
+    example: COUPON
+    type: string
+    enum:
+    - PREPAID
+    - COUPON
+    - BILLANALYZER
+    - STATEMENTCREDIT
+    - PREPAIDCREDIT
+    - COUPON_UNIQUE_CODE
+    - REPORTING_CROSSSALE
+    - UNKNOWN
+  OfferPriceTag:
+    example: EXPENSIVE
+    type: string
+    enum:
+    - EXPENSIVE
+    - MODERATE
+    - INEXPENSIVE
+  OfferTier:
+    example: OFFER
+    type: string
+    enum:
+    - OFFER
+    - EXPERIENCE
+  CampaignType:
+    description: >-
+      Type of the campaign. If offer is Simple, then campaign Type will be
+      Regular and if 2 or more offers are grouped ,then campaign type will be
+      Bundle. Possible Values - REGULAR,BUNDLE
+    example: REGULAR
+    type: string
+    enum:
+    - REGULAR
+    - BUNDLE
+  RedemptionType:
+    example: ONLINE_CODE
+    type: string
+    enum:
+    - ONLINE_CODE
+    - ONLINE_LINK
+    - INSTORE_IMAGE
+    - INSTORE_CODE
+    - INSTORE_BARCODE
+    - UNKNOWN
+    - PHONE
+    - EMAIL
+    - LOCATIONS
+    - EMPTY
+  RedemptionCodeType:
+    example: UNIQUE
+    type: string
+    enum:
+    - UNIQUE
+    - SHARED
+    - UNKNOWN
+  OfferImageArray:
+    type: object
+    properties:
+      item:
+        type: array
+        items:
+          $ref: '#/definitions/OfferImage'
+  BrowseOffersResponseSchema:
+    type: object
+    properties:
+      BrowseOffersResponse:
+        $ref: '#/definitions/BrowseOffersResponse'
+  GetOfferDetailsResponseSchema:
+    type: object
+    properties:
+      GetOfferDetailsResponse:
+        $ref: '#/definitions/GetOfferDetailsResponse'
+  Entry:
+    type: object
+    properties:
+      Key:
+        type: string
+      Value:
+        $ref: '#/definitions/OfferImageArray'
+  ExcludedTargetGeos:
+    type: object
+    properties:
+      Geo:
+        type: array
+        items:
+          $ref: '#/definitions/Geo'
+  I18nOffers:
+    type: object
+    properties:
+      OfferData:
+        type: array
+        items:
+          $ref: '#/definitions/InternationalizationOfferData'
+  #  LinkedOffer:
+  #    type: object
+  #    properties:
+  #      detailOfferData:
+  #        type: array
+  #        items:
+  #          $ref: '#/definitions/DetailOfferData'
+  #  LinkedOffer1:
+  #    type: object
+  #    properties:
+  #      offerData:
+  #        type: array
+  #        items:
+  #          $ref: '#/definitions/OfferData'
+  NearByAddresses:
+    type: object
+    properties:
+      NearByAddress:
+        type: array
+        items:
+          $ref: '#/definitions/BaseAddress'
+  OfferImage1:
+    type: object
+    properties:
+      Entry:
+        type: array
+        items:
+          $ref: '#/definitions/Entry'
+  Products:
+    type: object
+    properties:
+      Product:
+        type: array
+        items:
+          $ref: '#/definitions/Product'
+  RedemptionAddresses:
+    type: object
+    properties:
+      RedemptionAddress:
+        type: array
+        items:
+          $ref: '#/definitions/BaseAddress'
+  SourceGeos:
+    type: object
+    properties:
+      Geo:
+        type: array
+        items:
+          $ref: '#/definitions/Geo'
+  TargetGeos:
+    type: object
+    properties:
+      Geo:
+        type: array
+        items:
+          $ref: '#/definitions/Geo'
+  SourceSearchGeos:
+    type: object
+    properties:
+      Geo:
+        type: array
+        items:
+          $ref: '#/definitions/SourceSearchGeo'
+  TargetSearchGeos:
+    type: object
+    properties:
+      Geo:
+        type: array
+        items:
+          $ref: '#/definitions/TargetSearchGeo'
+  ErrorsResponse:
+    properties:
+      Errors:
+        $ref: '#/definitions/Errors'
+  Errors:
+    properties:
+      Error:
+        type: array
+        items:
+          $ref: '#/definitions/Error'
+  Error:
+    properties:
+      Source:
+        type: string
+        description: >-
+          This is the unique identifier that attempts to define the field in
+          error when available.  If a specific field cant be identified System
+          will be returned.
+        example: System
+      ReasonCode:
+        type: string
+        description: This will identify the reason for the error.
+        example: AUTHENTICATION_FAILED
+      Description:
+        type: string
+        description: >-
+          This is the text description of the error. This is optional and will
+          only be displayed if more information is available than is stored in
+          the data identifier and reason code.
+        example: Unauthorized Access
+      Recoverable:
+        type: boolean
+        description: >-
+          This is a true/false presentation to explain if the transaction was
+          submitted again would it be successful or not.
+        example: true
